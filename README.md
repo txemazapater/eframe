@@ -23,12 +23,18 @@ Environment / Toolchain
      ↓
 Project Specification
      ↓
-Repository Generation
+Plan
+     ↓
+Preview / Inspect
+     ↓
+Apply
      ↓
 Development / Validation
 ```
 
 The **Archetype** is the first structural decision. A hardware project, desktop application, web application, embedded system or data-analysis project should not travel through the same questionnaire or receive the same assistance.
+
+The **Plan** is the boundary between decision-making and side effects. eFrame should resolve what it intends to create or execute, render that intent for inspection, and only then allow an explicit apply step.
 
 ## Design principles
 
@@ -40,6 +46,7 @@ The **Archetype** is the first structural decision. A hardware project, desktop 
 6. **Repository as source of truth** — durable project knowledge belongs in version control, not in private agent context.
 7. **Reality wins** — compilers, tests, CI and physical validation are authoritative over generated assumptions.
 8. **Progressive complexity** — eFrame should ask only questions relevant to the chosen project path.
+9. **Inspectable before executable** — generated files, scripts, commands and remote operations must be visible before they can be applied.
 
 ## Intended interfaces
 
@@ -48,6 +55,8 @@ The first interface is expected to be an interactive CLI/TUI:
 ```text
 eframe new
 eframe init
+eframe plan
+eframe inspect
 eframe doctor
 eframe validate
 eframe explain
@@ -63,11 +72,11 @@ The exact libraries used for CLI/TUI, schema validation, rendering and packaging
 
 ## Current status
 
-**Phase 0 — Definition and architecture.**
+**Phase 0 — Definition, architecture and interaction experiments.**
 
-The repository intentionally starts with documentation before implementation. The immediate goal is to define the project model, archetype system, decision engine boundaries and project-specification format.
+The repository intentionally starts with documentation before implementation. A TUI laboratory under `experiments/` is used to test prompts, feedback, preview and inspection behaviour without committing those experiments to the stable core model.
 
-See [`docs/roadmap.md`](docs/roadmap.md) and [`docs/architecture/overview.md`](docs/architecture/overview.md).
+See [`docs/roadmap.md`](docs/roadmap.md), [`docs/architecture/overview.md`](docs/architecture/overview.md) and [`docs/decisions/ADR-0004-inspectable-plan-before-apply.md`](docs/decisions/ADR-0004-inspectable-plan-before-apply.md).
 
 ## License
 
