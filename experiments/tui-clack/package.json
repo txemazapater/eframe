@@ -1,0 +1,15 @@
+{
+  "name": "@eframe/tui-clack-lab",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node ./src/index.js"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.10.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
