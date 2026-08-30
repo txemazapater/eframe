@@ -39,14 +39,37 @@ The **Plan** is the boundary between decision-making and side effects. eFrame sh
 ## Design principles
 
 1. **Archetype first** — determine what is being built before choosing technologies.
-2. **Orthogonal layers** — project type, technology, environment and repository generation are independent concerns.
-3. **Declarative knowledge** — archetypes, profiles and technology capabilities should be data-driven whenever practical rather than hard-coded into the UI.
+2. **Orthogonal layers** — project type, technology, environment, version control, remote providers and repository generation are independent concerns.
+3. **Declarative knowledge** — archetypes, profiles, technologies and provider capabilities should be data-driven whenever practical rather than hard-coded into the UI.
 4. **UI-independent core** — the decision engine must not depend on the terminal interface.
 5. **Tool-agnostic projects** — generated repositories must not depend on a particular AI coding assistant.
 6. **Repository as source of truth** — durable project knowledge belongs in version control, not in private agent context.
-7. **Reality wins** — compilers, tests, CI and physical validation are authoritative over generated assumptions.
-8. **Progressive complexity** — eFrame should ask only questions relevant to the chosen project path.
-9. **Inspectable before executable** — generated files, scripts, commands and remote operations must be visible before they can be applied.
+7. **Git is core; hosted forges are optional** — GitHub, GitLab, Gitea and similar services are providers, not prerequisites.
+8. **Reality wins** — compilers, tests, CI and physical validation are authoritative over generated assumptions.
+9. **Progressive complexity** — eFrame should ask only questions relevant to the chosen project path and selected provider capabilities.
+10. **Inspectable before executable** — generated files, scripts, commands and remote operations must be visible before they can be applied.
+
+## Repository and provider model
+
+eFrame treats Git separately from remote hosting and collaboration services.
+
+A project may be:
+
+```text
+Git only
+Git + GitHub
+Git + GitLab
+Git + Gitea
+Git + Bitbucket
+Git + Azure DevOps
+Git + generic SSH remote
+```
+
+or use no remote at all.
+
+Remote providers expose capabilities such as repository creation, pull/merge requests, issues, releases, branch protection and hosted CI. eFrame should only offer or generate provider-specific features when those capabilities exist.
+
+CI is therefore not synonymous with GitHub Actions. The selected repository and CI providers determine the appropriate assets and operations.
 
 ## Intended interfaces
 
@@ -76,7 +99,7 @@ The exact libraries used for CLI/TUI, schema validation, rendering and packaging
 
 The repository intentionally starts with documentation before implementation. A TUI laboratory under `experiments/` is used to test prompts, feedback, preview and inspection behaviour without committing those experiments to the stable core model.
 
-See [`docs/roadmap.md`](docs/roadmap.md), [`docs/architecture/overview.md`](docs/architecture/overview.md) and [`docs/decisions/ADR-0004-inspectable-plan-before-apply.md`](docs/decisions/ADR-0004-inspectable-plan-before-apply.md).
+See [`docs/roadmap.md`](docs/roadmap.md), [`docs/architecture/overview.md`](docs/architecture/overview.md), [`docs/decisions/ADR-0004-inspectable-plan-before-apply.md`](docs/decisions/ADR-0004-inspectable-plan-before-apply.md) and [`docs/decisions/ADR-0005-git-core-remote-providers.md`](docs/decisions/ADR-0005-git-core-remote-providers.md).
 
 ## License
 
