@@ -18,12 +18,46 @@ function cancelled(value) {
   return value;
 }
 
+function buildPreview({ name, purpose, archetype, maturity, assistance }) {
+  const files = ['README.md', 'AGENTS.md', 'docs/roadmap.md'];
+
+  if (assistance.includes('architecture')) {
+    files.push('docs/architecture/overview.md', 'docs/decisions/ADR-0001-project-archetype.md');
+  }
+
+  if (assistance.includes('toolchain')) {
+    files.push('docs/environment.md');
+  }
+
+  if (assistance.includes('repository')) {
+    files.push('.gitignore', '.github/pull_request_template.md');
+  }
+
+  if (assistance.includes('ci')) {
+    files.push('.github/workflows/ci.yml');
+  }
+
+  return {
+    specification: {
+      project: { name, purpose, archetype, maturity },
+      assistance
+    },
+    files,
+    actions: [
+      'Create project specification',
+      'Render selected documentation and repository files',
+      'Prepare archetype-specific next decisions',
+      'Validate generated structure before any external action'
+    ]
+  };
+}
+
 console.clear();
 p.intro('eFrame · project discovery lab');
 
 p.note(
-  'This is an experimental conversation. It does not create files or repositories.',
-  'TUI prototype'
+  'Experimental mode. eFrame will build and display a project plan, but it will not create files, initialize Git or access GitHub.',
+  'PREVIEW / DRY-RUN'
 );
 
 const name = cancelled(await p.text({
@@ -75,6 +109,7 @@ const assistance = cancelled(await p.multiselect({
 }));
 
 const archetypeLabel = archetypes.find((item) => item.value === archetype)?.label ?? archetype;
+const preview = buildPreview({ name, purpose, archetype, maturity, assistance });
 
 p.note(
   [
@@ -87,19 +122,39 @@ p.note(
   'Discovery summary'
 );
 
+const inspect = cancelled(await p.confirm({
+  message: 'Show what eFrame would prepare?',
+  initialValue: true
+}));
+
+if (!inspect) {
+  p.outro('Preview stopped. No changes were made.');
+  process.exit(0);
+}
+
+p.note(
+  preview.files.map((file) => `  + ${file}`).join('\n'),
+  'Planned files'
+);
+
+p.note(
+  preview.actions.map((action, index) => `  ${index + 1}. ${action}`).join('\n'),
+  'Planned actions'
+);
+
+p.note(
+  JSON.stringify(preview.specification, null, 2),
+  'Project specification (preview)'
+);
+
 const proceed = cancelled(await p.confirm({
-  message: 'Does this describe the project well enough to continue?',
+  message: 'Does this look like the right project plan?',
   initialValue: true
 }));
 
 if (!proceed) {
-  p.outro('Good. The discovery flow should be refined before it generates anything.');
+  p.outro('Good. Refine the decisions and preview again. Nothing was generated.');
   process.exit(0);
 }
 
-const s = p.spinner();
-s.start('Resolving the next decision path');
-await new Promise((resolve) => setTimeout(resolve, 650));
-s.stop(`Next path: ${archetypeLabel}`);
-
-p.outro('Prototype complete. No repository changes were made.');
+p.outro(`Dry-run complete. Next decision path would be: ${archetypeLabel}. No files or repositories were created.`);
