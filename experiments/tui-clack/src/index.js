@@ -52,7 +52,16 @@ function buildPreview({ name, purpose, archetype, maturity, assistance }) {
   };
 }
 
+const logo = String.raw`
+   ___ _____
+  / _// __/______ ___ _  ___
+ / _// _// __/ _ \/  ' \/ -_)
+/___/_/ /_/  \___/_/_/_/\__/
+        engineering framework
+`;
+
 console.clear();
+console.log(logo);
 p.intro('eFrame · project discovery lab');
 
 p.note(
