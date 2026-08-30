@@ -2,7 +2,7 @@
 
 ## Purpose
 
-eFrame separates project creation into orthogonal layers so that project type, technology selection, environment requirements and repository generation can evolve independently.
+eFrame separates project creation into orthogonal layers so that project type, technology selection, environment requirements, version control, remote providers and repository generation can evolve independently.
 
 ## Layers
 
@@ -60,7 +60,33 @@ Describes what must actually exist on the development or target system: operatin
 
 This layer supports future `eframe doctor` and validation capabilities.
 
-### 6. Project Specification
+### 6. Version Control
+
+Git is a core concern independent of any hosting provider.
+
+eFrame should support a valid local Git repository with no remote configured. Core Git responsibilities include repository initialization, status, branches, commits and remotes without assuming a collaboration platform.
+
+### 7. Remote / Collaboration Providers
+
+Remote hosting and forge-specific features are optional providers layered on top of Git.
+
+Examples include GitHub, GitLab, Gitea, Bitbucket, Azure DevOps and generic Git remotes.
+
+Providers should declare capabilities rather than forcing global assumptions. Relevant capabilities may include:
+
+- repository creation;
+- pull or merge requests;
+- issues;
+- releases;
+- branch protection;
+- hosted CI;
+- artifact storage.
+
+A provider may expose only a subset. The selected capabilities determine which later questions, files and operations are relevant.
+
+CI must remain separable from repository hosting: a GitLab-hosted repository could use Jenkins, for example.
+
+### 8. Project Specification
 
 The normalized, serializable result of the decision process.
 
@@ -82,15 +108,22 @@ technologies:
 environment:
   runtime: docker
   target: linux
+
+repository:
+  vcs: git
+  remote:
+    provider: none
 ```
 
 The definitive schema has not yet been designed.
 
-### 7. Repository Generation
+### 9. Repository Generation
 
 Consumes a project specification and produces or adapts a repository: documentation, project structure, configuration, CI, environment metadata and technology-specific assets.
 
 Repository generation is downstream of decision making and must not contain hidden architectural decisions that are absent from the specification or documented defaults.
+
+Provider-specific assets must be generated only when required by the selected provider. For example, `.github/workflows/` belongs to a GitHub Actions decision, not to Git itself.
 
 ## Interfaces
 
@@ -110,6 +143,12 @@ Repository generation is downstream of decision making and must not contain hidd
       └─────────────┼─────────────┘
                     ▼
             Environment Model
+                    │
+                    ▼
+                 Git Core
+                    │
+                    ▼
+          Optional Providers
                     │
                     ▼
           Project Specification
