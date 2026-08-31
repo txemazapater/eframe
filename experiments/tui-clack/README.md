@@ -32,26 +32,59 @@ Then launch it from a terminal with:
 eframe
 ```
 
-The CLI entry point starts with `#!/usr/bin/env node`. This is important on Windows because npm uses that shebang when it creates the `.cmd` and PowerShell shims that invoke the JavaScript file through Node. Without it, Windows may try to open the `.js` file through Windows Script Host instead.
+The CLI entry point starts with `#!/usr/bin/env node`. This is important on Windows because npm uses that shebang when it creates the `.cmd` and PowerShell shims that invoke the JavaScript file through Node.
 
-If `eframe` was linked before the shebang was added, regenerate the npm shim by running `npm link` again from this directory. If an old global link persists, remove and recreate it:
+If an older global link persists, recreate it:
 
 ```bash
 npm unlink -g @eframe/tui-clack-lab
 npm link
 ```
 
-`npm start` remains available as a development fallback:
-
-```bash
-npm start
-```
+`npm start` remains available as a development fallback.
 
 Requires Node.js 20 or newer.
 
+## Current command surface
+
+The lab now uses Commander as the CLI dispatcher.
+
+```text
+eframe                interactive assistant
+eframe new            interactive project discovery
+eframe init           adopt eFrame in an existing project
+eframe doctor         inspect runtime / host / project environment
+eframe plan           resolve an inspectable plan
+eframe inspect        inspect planned outputs and operations
+eframe diff           compare current and planned state
+eframe apply          explicitly apply an inspected plan
+eframe validate       validate project/environment state
+eframe explain        explain resolved decisions
+eframe publish        publication / projection / distribution entry point
+```
+
+At this stage, only the interactive assistant (`eframe` and `eframe new`) is functional. The other commands are intentionally registered but return an explicit "not implemented yet" message. This lets the command grammar evolve independently from implementation and prevents experimental stubs from pretending to perform real work.
+
+Useful examples:
+
+```bash
+eframe --help
+eframe new --dry-run
+eframe doctor --help
+eframe apply --help
+```
+
+The intended command grammar is:
+
+```text
+eframe <verb> [target] [options]
+```
+
+Commands express intent; flags refine execution.
+
 ## Visual identity experiment
 
-The current prototype starts with a deliberately small text logo. This is cosmetic and has no architectural significance; it exists so that terminal identity, vertical space and visual tone can be evaluated alongside the prompts.
+The current prototype starts with the eFRAME terminal logo: lowercase blue `e`, uppercase white `FRAME`.
 
 No extra dependency is used for the logo.
 
@@ -98,19 +131,6 @@ The plan should also distinguish between:
 
 `PREVIEW / INSPECT` must be side-effect free. `APPLY` must be an explicit user decision.
 
-This creates a natural future command model:
-
-```text
-eframe new                 # interactive discovery + preview
-eframe new --dry-run       # never apply changes
-eframe plan project.yaml   # resolve and render a plan
-eframe inspect             # inspect planned outputs and operations
-eframe diff                # compare plan with current workspace
-eframe apply               # explicit execution
-```
-
-The exact command names are still experimental.
-
 ## Why these questions?
 
 The purpose question is intentionally placed before the archetype selector. This lets us test whether a short human description provides useful context before forcing the project into a category.
@@ -123,33 +143,8 @@ The assistance selection is currently experimental. It lets us test whether user
 
 ## Things to observe while testing
 
-Do not judge only whether the prompts technically work. Pay attention to:
-
-- terminal density;
-- wording length;
-- whether hints help or distract;
-- keyboard navigation;
-- visibility of the current context;
-- usefulness of the summary;
-- whether the preview makes side effects understandable;
-- whether generated file contents are comfortable to inspect in-terminal;
-- cancellation behaviour;
-- whether eFrame explains enough without becoming verbose;
-- whether the interaction feels deterministic and trustworthy;
-- whether the logo adds identity without wasting too much space.
+Do not judge only whether the prompts technically work. Pay attention to terminal density, wording length, hints, keyboard navigation, context visibility, preview clarity, cancellation behaviour and whether eFrame feels deterministic and trustworthy.
 
 ## Next experiments
 
-This lab can contain alternate entry points rather than changing one prototype endlessly. For example:
-
-```text
-src/
-  index.js          # current compact flow + dry-run preview
-  minimal.js        # fewer questions
-  conversational.js # more explanatory feedback
-  panels.js         # richer visual grouping
-```
-
 A near-term experiment should add an interactive inspector capable of selecting a planned file and viewing its rendered content without writing it to disk.
-
-That will let us compare interaction styles side by side before selecting a direction for the real CLI.
