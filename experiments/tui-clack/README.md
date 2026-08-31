@@ -14,11 +14,36 @@ Its purpose is to answer practical interface questions early:
 
 Nothing in this experiment should be treated as a committed eFrame API or decision model.
 
-## Run
+## Run as `eframe`
+
+The experimental package exposes a real Node CLI entry point named `eframe`.
+
+After pulling the latest changes:
 
 ```bash
 cd experiments/tui-clack
 npm install
+npm link
+```
+
+Then launch it from a terminal with:
+
+```bash
+eframe
+```
+
+The CLI entry point starts with `#!/usr/bin/env node`. This is important on Windows because npm uses that shebang when it creates the `.cmd` and PowerShell shims that invoke the JavaScript file through Node. Without it, Windows may try to open the `.js` file through Windows Script Host instead.
+
+If `eframe` was linked before the shebang was added, regenerate the npm shim by running `npm link` again from this directory. If an old global link persists, remove and recreate it:
+
+```bash
+npm unlink -g @eframe/tui-clack-lab
+npm link
+```
+
+`npm start` remains available as a development fallback:
+
+```bash
 npm start
 ```
 
